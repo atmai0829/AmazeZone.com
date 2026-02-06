@@ -10,15 +10,54 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_13_130539) do
-  create_table "users", force: :cascade do |t|
+ActiveRecord::Schema[8.1].define(version: 2026_02_06_211022) do
+  create_table "credit_cards", force: :cascade do |t|
+    t.string "card_number"
+    t.datetime "created_at", null: false
+    t.string "cvv"
+    t.date "expiration_date"
     t.string "name"
-    t.string "email_address"
-    t.string "password_digest"
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id"], name: "index_credit_cards_on_user_id"
+  end
+
+  create_table "products", force: :cascade do |t|
+    t.string "category"
+    t.datetime "created_at", null: false
+    t.string "name"
+    t.integer "price"
+    t.integer "quantity"
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "transactions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "creditcard_id", null: false
+    t.integer "product_id", null: false
+    t.integer "quantity"
+    t.decimal "total_cost"
+    t.integer "transaction_number"
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["creditcard_id"], name: "index_transactions_on_creditcard_id"
+    t.index ["product_id"], name: "index_transactions_on_product_id"
+    t.index ["user_id"], name: "index_transactions_on_user_id"
+  end
+
+  create_table "users", force: :cascade do |t|
     t.text "address"
-    t.string "phone_number"
     t.datetime "created_at", precision: nil, null: false
+    t.string "email_address"
+    t.string "name"
+    t.string "password_digest"
+    t.string "phone_number"
     t.datetime "updated_at", precision: nil, null: false
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
+
+  add_foreign_key "credit_cards", "users"
+  add_foreign_key "transactions", "credit_cards", column: "creditcard_id"
+  add_foreign_key "transactions", "products"
+  add_foreign_key "transactions", "users"
 end

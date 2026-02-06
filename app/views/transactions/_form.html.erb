@@ -1,0 +1,83 @@
+<%= form_with(model: transaction) do |form| %>
+  <% if transaction.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(transaction.errors.count, "error") %> prohibited this transaction from being saved:</h2>
+
+      <ul>
+        <% transaction.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <p>You are purchasing the product: <%= @product.name %></p>
+
+  <div class="field">
+    <% qty = @product.quantity %>
+    <%= form.label :quantity %>
+    <%= form.number_field :quantity, :id => 'quantity', min: 1, max: qty, onchange: "calculateTotalPrice();" %>
+  </div>
+
+  <div class="field">
+    <%= form.label :total_cost %>
+    <%= form.text_field :total_cost, :id => 'total_cost', :readonly => true %>
+  </div>
+
+  <div class="field">
+    <%= form.hidden_field :product_id, value: @product.id %>
+  </div>
+
+  <div class="field">
+    <%= form.label :creditcard_id, "Credit card number" %>
+    <%= form.collection_select :creditcard_id, CreditCard.where(user_id: current_user.id),:id,:card_number, include_blank: false %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit "Complete purchase" %>
+  </div>
+
+
+
+  <script type="text/javascript">
+      function calculateTotalPrice() {
+          var price = "<%= @product.price %>";
+          document.getElementById('total_cost').value = document.getElementById('quantity').value * price;
+      }
+  </script>
+
+
+<!--  <div>-->
+    <%#= form.label :transaction_number, style: "display: block" %>
+    <%#= form.number_field :transaction_number %>
+<!--  </div>-->
+
+<!--  <div>-->
+    <%#= form.label :quantity, style: "display: block" %>
+    <%#= form.number_field :quantity %>
+<!--  </div>-->
+
+<!--  <div>-->
+    <%#= form.label :total_cost, style: "display: block" %>
+    <%#= form.text_field :total_cost %>
+<!--  </div>-->
+
+<!--  <div>-->
+    <%#= form.label :user_id, style: "display: block" %>
+    <%#= form.text_field :user_id %>
+<!--  </div>-->
+
+<!--  <div>-->
+    <%#= form.label :product_id, style: "display: block" %>
+    <%#= form.text_field :product_id %>
+<!--  </div>-->
+
+<!--  <div>-->
+    <%#= form.label :creditcard_id, style: "display: block" %>
+    <%#= form.text_field :creditcard_id %>
+<!--  </div>-->
+
+<!--  <div>-->
+    <%#= form.submit %>
+<!--  </div>-->
+<% end %>
